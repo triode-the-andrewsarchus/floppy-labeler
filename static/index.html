@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floppy Label Studio • 3.5" Diskette NFC Music Labeler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="floppy-icon-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1 class="brand-title">FLOPPY LABEL STUDIO</h1>
+          <span class="brand-subtitle">3.5" NFC Music Diskette • Avery 5096/5196 / Label Outfitters</span>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-pill">
+          <span class="stat-label">Disks:</span>
+          <span class="stat-val" id="stat-disk-count">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Sheets:</span>
+          <span class="stat-val" id="stat-sheet-count">0</span>
+        </div>
+        <div class="save-indicator" id="save-status">
+          <span class="status-dot"></span>
+          <span class="status-text">Ready</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="btn-sheet-preview" title="View 8.5x11 Sheet Layout">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          <span>Sheet Preview</span>
+        </button>
+
+        <button class="btn btn-secondary" id="btn-settings" title="Print & Sheet Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Settings</span>
+        </button>
+
+        <button class="btn btn-primary" id="btn-render-pdf" title="Generate Print-Ready PDF">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span>Render PDF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Toolbar Banner -->
+    <div class="toolbar-banner">
+      <div class="toolbar-left">
+        <button class="btn btn-accent" id="btn-add-floppy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Add Floppy</span>
+        </button>
+
+        <button class="btn btn-outline" id="btn-batch-add">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          <span>Batch Add</span>
+        </button>
+
+        <button class="btn btn-outline" id="btn-renumber">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 7h16M4 12h16M4 17h10"></path>
+          </svg>
+          <span>Re-Number 1..N</span>
+        </button>
+
+        <div class="clipboard-tip">
+          <kbd>Ctrl+V</kbd> paste image directly onto active disk!
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <input type="text" class="input-project-title" id="project-title" placeholder="Project Name" value="My Floppy Music Collection">
+      </div>
+    </div>
+
+    <!-- Main Floppy Gallery Grid -->
+    <main class="main-content">
+      <div class="floppy-grid" id="floppy-grid">
+        <!-- Dynamic Floppy Cards Injected Here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Floppy Editor Modal / Drawer -->
+  <div class="modal-overlay" id="editor-modal">
+    <div class="modal-card editor-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 class="modal-title">Edit Floppy Label <span class="disk-badge" id="editor-disk-badge">#01</span></h2>
+          <span class="modal-subtitle">Configure 3-section wrap-around label (Back Strip, Spine, Front Cover)</span>
+        </div>
+        <button class="btn-close" id="btn-close-editor">&times;</button>
+      </div>
+
+      <div class="modal-body editor-body">
+        <!-- Live Synchronized Label Preview (Left) -->
+        <div class="editor-preview-column">
+          <div class="preview-label-header">
+            <span>LIVE 3-SECTION PREVIEW</span>
+            <span class="tag-specs">2.75" × 2.75"</span>
+          </div>
+
+          <div class="floppy-label-box" id="editor-preview-box">
+            <!-- Rear Strip Section (Top) -->
+            <div class="label-section section-back" id="preview-section-back">
+              <div class="back-bg-texture" id="preview-back-texture"></div>
+              <div class="back-text-content" id="preview-back-text"></div>
+              <span class="section-indicator">Rear Strip (0.50")</span>
+            </div>
+
+            <!-- Spine Section (Middle) -->
+            <div class="label-section section-spine" id="preview-section-spine">
+              <div class="spine-text-content" id="preview-spine-text"></div>
+              <span class="section-indicator">Spine (0.125")</span>
+            </div>
+
+            <!-- Front Section (Bottom) -->
+            <div class="label-section section-front" id="preview-section-front">
+              <div class="front-image-container" id="preview-front-image"></div>
+              <div class="sequential-number-badge" id="preview-number-badge">01</div>
+              <span class="section-indicator">Front Cover (2.125")</span>
+            </div>
+          </div>
+
+          <div class="preview-tips">
+            <span>ℹ️ When printed & peeled, this single sticker wraps over the top edge of your 3.5" floppy disk.</span>
+          </div>
+        </div>
+
+        <!-- Editor Form Tabs (Right) -->
+        <div class="editor-form-column">
+          <div class="tab-nav">
+            <button class="tab-btn active" data-tab="tab-front">1. Front Image & #</button>
+            <button class="tab-btn" data-tab="tab-spine">2. Spine Pattern</button>
+            <button class="tab-btn" data-tab="tab-back">3. Rear Details</button>
+          </div>
+
+          <!-- TAB 1: FRONT COVER & NUMBERING -->
+          <div class="tab-pane active" id="tab-front">
+            <div class="form-group">
+              <label class="form-label">Cover Layout (1 to 4 Artists)</label>
+              <select class="form-select" id="field-cover-layout">
+                <option value="single">Single Artist Cover (Standard Full Front)</option>
+                <option value="split_2_diagonal">2 Artists • 45° Diagonal Split (Arcade VS Style)</option>
+                <option value="split_3_skewed">3 Artists • Skewed 3-Bar Split</option>
+                <option value="split_4_quadrant">4 Artists • 4 Quadrants (2×2 Grid)</option>
+              </select>
+            </div>
+
+            <!-- Multi-Image Slots Grid (1 to 4 slots based on layout) -->
+            <div class="slots-container" id="slots-container">
+              <!-- Dynamically populated slot cards -->
+            </div>
+
+            <div class="form-group" id="single-dropzone-group">
+              <label class="form-label" id="dropzone-label">Album Art Image (Slot 1)</label>
+              <div class="image-dropzone" id="image-dropzone">
+                <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+                <div class="dropzone-inner">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <p class="dropzone-text" id="dropzone-hint">Drag image here, click to browse, or press <strong>Ctrl+V</strong> to paste from clipboard</p>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-browse-image">Browse Image</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="slot-adjustments-section" id="slot-adjustments-section">
+              <div class="slot-adjustments-header">
+                <span class="slot-adjustments-title" id="adjustments-header">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                  <span id="adjustments-header-text">Image Adjustments: Slot 1</span>
+                </span>
+                <button type="button" class="btn btn-xs btn-outline" id="btn-reset-slot-transform" title="Reset zoom and pan for this slot">Reset Slot</button>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group half">
+                  <label class="form-label">Fit Mode</label>
+                  <select class="form-select" id="field-fit-mode">
+                    <option value="cover">Cover (Fill & Crop)</option>
+                    <option value="contain">Contain (Fit Inside)</option>
+                  </select>
+                </div>
+
+                <div class="form-group half">
+                  <label class="form-label">Zoom Scale: <span id="val-zoom">1.0x</span></label>
+                  <input type="range" class="form-range" id="field-zoom" min="0.5" max="2.5" step="0.05" value="1.0">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group half">
+                  <label class="form-label">Pan Horizontal (X): <span id="val-pan-x">0%</span></label>
+                  <input type="range" class="form-range" id="field-pan-x" min="-100" max="100" step="1" value="0">
+                </div>
+                <div class="form-group half">
+                  <label class="form-label">Pan Vertical (Y): <span id="val-pan-y">0%</span></label>
+                  <input type="range" class="form-range" id="field-pan-y" min="-100" max="100" step="1" value="0">
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="form-group">
+              <label class="form-label">Sequential Number Display</label>
+              <div class="form-row">
+                <div class="form-group half">
+                  <input type="text" class="form-input" id="field-display-number" placeholder="e.g. 01, #1, MIX-1">
+                  <span class="field-hint">Rendered in lower-left with crisp white text & black outline</span>
+                </div>
+                <div class="form-group half">
+                  <button type="button" class="btn btn-outline" id="btn-reset-number">Auto Number</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: SPINE -->
+          <div class="tab-pane" id="tab-spine">
+            <div class="form-group">
+              <label class="form-label">Spine Pattern Style</label>
+              <div class="btn-group-toggle">
+                <button type="button" class="btn-toggle active" id="btn-spine-solid" data-style="solid">⬛ Solid Color</button>
+                <button type="button" class="btn-toggle" id="btn-spine-candycane" data-style="candy_cane">🍬 Candy-Cane Stripes</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="field-header-row">
+                <label class="form-label">Color Presets</label>
+                <button type="button" class="btn btn-sm btn-outline" id="btn-extract-colors">🎨 Extract from Cover</button>
+              </div>
+              <div class="preset-colors">
+                <button type="button" class="preset-pill" data-c1="#D90429" data-c2="#FFFFFF" style="--p1: #D90429; --p2: #FFFFFF;">Peppermint</button>
+                <button type="button" class="preset-pill" data-c1="#00F0FF" data-c2="#FF007F" style="--p1: #00F0FF; --p2: #FF007F;">Cyberpunk</button>
+                <button type="button" class="preset-pill" data-c1="#FFB703" data-c2="#023047" style="--p1: #FFB703; --p2: #023047;">Cassette</button>
+                <button type="button" class="preset-pill" data-c1="#2A9D8F" data-c2="#F4A261" style="--p1: #2A9D8F; --p2: #F4A261;">Emerald/Gold</button>
+                <button type="button" class="preset-pill" data-c1="#7209B7" data-c2="#4CC9F0" style="--p1: #7209B7; --p2: #4CC9F0;">Retrowave</button>
+                <button type="button" class="preset-pill" data-c1="#212529" data-c2="#F8F9FA" style="--p1: #212529; --p2: #F8F9FA;">Monochrome</button>
+                <button type="button" class="preset-pill" data-c1="#38B000" data-c2="#0077B6" style="--p1: #38B000; --p2: #0077B6;">Candy Lime</button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group half">
+                <label class="form-label">Primary Color</label>
+                <div class="color-picker-wrap">
+                  <input type="color" class="form-color" id="field-spine-color1" value="#D90429">
+                  <input type="text" class="form-input color-hex" id="field-spine-hex1" value="#D90429">
+                </div>
+              </div>
+              <div class="form-group half" id="wrap-color2">
+                <label class="form-label">Secondary Stripe Color</label>
+                <div class="color-picker-wrap">
+                  <input type="color" class="form-color" id="field-spine-color2" value="#FFFFFF">
+                  <input type="text" class="form-input color-hex" id="field-spine-hex2" value="#FFFFFF">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row" id="wrap-stripe-sliders">
+              <div class="form-group half">
+                <label class="form-label">Stripe Width: <span id="val-stripe-w">4.5px</span></label>
+                <input type="range" class="form-range" id="field-stripe-width" min="2.5" max="12" step="0.5" value="4.5">
+              </div>
+              <div class="form-group half">
+                <label class="form-label">Stripe Angle: <span id="val-stripe-angle">45°</span></label>
+                <input type="range" class="form-range" id="field-stripe-angle" min="15" max="75" step="5" value="45">
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="form-group">
+              <div class="form-check">
+                <input type="checkbox" id="field-auto-spine-text" checked>
+                <label for="field-auto-spine-text">Auto-derive spine text from Artist - Album</label>
+              </div>
+              <div id="wrap-spine-text-inputs" style="margin-top: 8px;">
+                <input type="text" class="form-input" id="field-spine-text" placeholder="Auto: ARTIST - ALBUM (or type custom override)">
+                <div class="form-row" style="margin-top: 8px;">
+                  <div class="form-group half">
+                    <label class="form-label">Spine Text Color</label>
+                    <input type="color" class="form-color" id="field-spine-text-color" value="#FFFFFF">
+                  </div>
+                  <div class="form-group half">
+                    <button type="button" class="btn btn-outline" id="btn-auto-spine-text">Reset to Artist - Album</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: REAR DETAILS (ADDITIONAL ARTISTS / ALBUMS) -->
+          <div class="tab-pane" id="tab-back">
+            <div class="form-group">
+              <label class="form-label">Rear Section Details</label>
+              <select class="form-select" id="field-music-template">
+                <option value="single_album">Single Album (Artist, Album, Year, Subtitle/Label)</option>
+                <option value="split_album">Combined Multi-Album (Split 2-in-1 / Double Album)</option>
+                <option value="compilation">Compilation / Multi-Artist (Featured Artists / Labels)</option>
+                <option value="freeform">Custom Additional Notes / Text</option>
+              </select>
+            </div>
+
+            <!-- Dynamic Template Fields -->
+            <div id="template-fields-container">
+              <!-- Template Specific Fields Loaded Here -->
+            </div>
+
+            <div class="form-group">
+              <div class="field-header-row">
+                <label class="form-label">Compiled Rear Strip Text</label>
+                <div class="form-check">
+                  <input type="checkbox" id="field-auto-sync-back" checked>
+                  <label for="field-auto-sync-back">Auto-sync from template</label>
+                </div>
+              </div>
+              <textarea class="form-textarea" id="field-back-text" rows="4" placeholder="Additional artists or albums for rear strip"></textarea>
+              <span class="field-hint">Rendered on a heavily blurred, lightened texture of the album art for clean readability.</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group half">
+                <div class="form-check">
+                  <input type="checkbox" id="field-two-columns">
+                  <label for="field-two-columns">Use 2 Columns (for multiple albums)</label>
+                </div>
+              </div>
+              <div class="form-group half">
+                <label class="form-label">Text Color</label>
+                <input type="color" class="form-color" id="field-back-text-color" value="#111827">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="footer-left">
+          <button type="button" class="btn btn-danger" id="btn-delete-floppy">Delete Floppy</button>
+          <button type="button" class="btn btn-secondary" id="btn-duplicate-floppy">Duplicate</button>
+        </div>
+        <div class="footer-right">
+          <button type="button" class="btn btn-secondary" id="btn-prev-floppy">← Previous</button>
+          <button type="button" class="btn btn-secondary" id="btn-next-floppy">Next →</button>
+          <button type="button" class="btn btn-primary" id="btn-save-floppy">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sheet Preview Modal (Direct PDF) -->
+  <div class="modal-overlay" id="sheet-modal">
+    <div class="modal-card sheet-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 class="modal-title">Sheet Print Preview (Direct PDF)</h2>
+          <span class="modal-subtitle">Direct PDF print render • Avery 5096/5196 / Label Outfitters 3.5" (9 labels per sheet)</span>
+        </div>
+        <div class="sheet-modal-controls">
+          <a class="btn btn-sm btn-outline" id="btn-sheet-open-tab" href="#" target="_blank">Open in New Tab ↗</a>
+          <a class="btn btn-sm btn-primary" id="btn-sheet-download" href="#" download>Download PDF ⬇</a>
+          <button class="btn-close" id="btn-close-sheet">&times;</button>
+        </div>
+      </div>
+
+      <div class="modal-body sheet-preview-body">
+        <div id="sheet-pdf-loading" class="sheet-loading-spinner" style="display: none;">
+          <div class="spinner-ring"></div>
+          <span>Rendering print-ready PDF...</span>
+        </div>
+        <iframe id="sheet-pdf-iframe" src="" title="Sheet PDF Preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-card settings-modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title">Print & Sheet Settings</h2>
+        <button class="btn-close" id="btn-close-settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h3>Print Optimization</h3>
+          <div class="form-check">
+            <input type="checkbox" id="setting-invert-back" checked>
+            <label for="setting-invert-back">Invert Back Strip Text 180° (Recommended: reads upright when folded over diskette)</label>
+          </div>
+          <div class="form-check" style="margin-top: 10px;">
+            <input type="checkbox" id="setting-draw-guides" checked>
+            <label for="setting-draw-guides">Print Faint Alignment / Fold Lines (Great for test-print alignment on regular paper)</label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Bottom 12 Filing Strips</h3>
+          <p class="field-hint">The sheet has twelve 1-3/8" × 1/2" filing strips below the 9 main disk labels.</p>
+          <select class="form-select" id="setting-bottom-strips">
+            <option value="spine_match">Populate with Matching Spine Candy-Cane Strips & Titles</option>
+            <option value="title_match">Populate with Disk Number & Album Title</option>
+            <option value="blank">Leave Blank / Unprinted</option>
+          </select>
+        </div>
+
+        <div class="settings-section">
+          <h3>Sequential Number Styling</h3>
+          <div class="form-row">
+            <div class="form-group half">
+              <label class="form-label">Font Size (pt)</label>
+              <input type="number" class="form-input" id="setting-number-size" value="20" min="12" max="32">
+            </div>
+            <div class="form-group half">
+              <label class="form-label">Number Zero-Padding</label>
+              <select class="form-select" id="setting-number-pad">
+                <option value="2">2 Digits (01, 02, 03...)</option>
+                <option value="1">1 Digit (1, 2, 3...)</option>
+                <option value="3">3 Digits (001, 002...)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Project Backup & Reset</h3>
+          <div class="btn-row">
+            <button type="button" class="btn btn-outline" id="btn-export-json">Export Project JSON</button>
+            <button type="button" class="btn btn-outline" id="btn-import-json">Import Project JSON</button>
+            <input type="file" id="file-import-json" accept=".json" style="display: none;">
+            <button type="button" class="btn btn-danger-outline" id="btn-reset-demo">Reset to Demo Floppies</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Ready Modal -->
+  <div class="modal-overlay" id="pdf-modal">
+    <div class="modal-card pdf-modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title">PDF Generated Successfully!</h2>
+        <button class="btn-close" id="btn-close-pdf">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="pdf-icon-wrap">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+
+        <h3 id="pdf-modal-filename" style="margin: 12px 0 6px 0;">floppy_labels.pdf</h3>
+        <p class="field-hint" id="pdf-modal-details">1 Page • 9 Labels • High-DPI Print Ready</p>
+
+        <div class="print-instruction-box">
+          <strong>⚠️ IMPORTANT PRINTER SETTINGS:</strong>
+          <ul>
+            <li>In your PDF viewer print dialog, select <strong>Scale: 100%</strong> (or <strong>"Actual Size"</strong>).</li>
+            <li>Do <strong>NOT</strong> select "Fit to Page" or "Shrink oversized pages" to preserve exact margins!</li>
+            <li>Paper size: <strong>US Letter (8.5" × 11")</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="pdf-actions">
+          <a class="btn btn-primary btn-lg" id="btn-pdf-download" href="#" target="_blank" download>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download PDF</span>
+          </a>
+          <a class="btn btn-secondary btn-lg" id="btn-pdf-open" href="#" target="_blank">
+            <span>Open in Browser</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
